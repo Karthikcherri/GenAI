@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Contact</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        /* Floating Contact Us button */
+        .contact-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .contact-btn:hover {
+            background-color: #218838;
+        }
+        /* Contact Us Form (Modal) */
+        .contact-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        /* Heading styling for modal */
+        .contact-modal h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        /* Inputs styling */
+        .contact-modal input[type="text"],
+        .contact-modal input[type="email"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        /* Button styling */
+        .contact-modal button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .contact-modal button:hover {
+            background-color: #0056b3;
+        }
+        /* Chatbot styling */
+        .chatbot {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+        }
+        .chatbot-message {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .chatbot-options button {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .chatbot-options button:hover {
+            background-color: #218838;
+        }
+        /* Additional input for option 4 */
+        .additional-input {
+            display: none;
+            margin-top: 10px;
+        }
+        .additional-input textarea {
+            width: 90%;
+            height: 80px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .additional-label {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .confirmation-input {
+            display: none;
+            margin-top: 10px;
+        }
+        .confirmation-input textarea {
+            width: 90%;
+            height: 80px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .confirmation-label {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        /* Paperclip Icon Styling */
+        .paperclip-icon {
+            font-size: 12px;
+            cursor: pointer;
+            color: #007bff;
+        }
+        .paperclip-icon:hover {
+            color: #0056b3;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        /* Send Icon styling */
+        .send-icon {
+            font-size: 12px;
+            cursor: pointer;
+            color: #28a745;
+        }
+        .send-icon:hover {
+            color: #218838;
+        }
+        .file-name {
+            font-size: 12px;
+            color: #555;
+            margin-top: 5px;
+        }
+        .active-portfolio-message {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .back-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 7px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <!-- Include FontAwesome for the paperclip icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Floating Contact Us Button -->
+    <button class="contact-btn" onclick="openContactForm()">Contact Us</button>
+
+    <!-- Contact Us Form (Modal) -->
+    <div class="contact-modal" id="contactModal">
+        <h3>Contact Us</h3>
+        <form id="contactForm">
+            <input type="text" id="firstName" placeholder="First Name" required />
+            <input type="text" id="lastName" placeholder="Last Name" required />
+            <input type="email" id="email" placeholder="Email" required />
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    
+
+    <!-- Chatbot Modal -->
+    <div id="chatbot" class="chatbot">
+        <div class="chatbot-message" id="chatbotMessage"></div>
+        <!-- Active portfolio message -->
+        
+        <div class="chatbot-options" id="chatbotOptions"></div>
+        <div class="additional-input" id="additionalInput">
+            <div class="additional-label">
+                Please provide additional details to assist in analyzing and troubleshooting the issue.
+            </div>
+            <textarea placeholder="Enter additional information"></textarea>
+            <!-- Paperclip icon for file upload -->
+            <label for="fileUpload" class="paperclip-icon">
+                <i class="fas fa-paperclip"></i> Attach File
+            </label>
+            <input type="file" id="fileUpload" name="fileUpload" onchange="handleFileSelect(event)" />
+            <!-- File name and send icon will appear after file selection -->
+            <div id="fileName" class="file-name"></div>
+            <span id="sendIcon" class="send-icon" style="display:none;" onclick="uploadImage()"> <i class="fas fa-paper-plane"></i>Send</span>
+            <button class="back-btn" onclick="backToOptions()" style="display: none;">Back</button>
+        </div>
+        <div class="confirmation-input" id="confirmationInput" style="margin-top: 10px;">
+            <div class="confirmation-label" style="font-size: 14px; margin-bottom: 10px; color: #555;">
+                Please enter 'Yes' or 'No' below:
+            </div>
+            <textarea id="confirmationInputText" placeholder="Enter Yes or No" style="width: 90%; height: 80px; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+            <button class="send-icon" onclick="sendConfirmationInput()" style="font-size: 14px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 10px;">
+                <i class="fas fa-paper-plane"></i> Send
+            </button>
+        </div>
+        
+        <!-- This div will hold the response message after submission -->
+        <div id="confirmationResult" style="font-size: 16px; margin-top: 15px;"></div>
+        
+        
+    </div>
+
+    <script>
+        // Open the Contact Us form modal
+        function openContactForm() {
+            document.getElementById('contactModal').style.display = 'block';
+        }
+
+        // Close the Contact Us form modal when clicked outside (if needed)
+        window.onclick = function(event) {
+            var modal = document.getElementById('contactModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Form submission logic (validation and submission)
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!firstName || !lastName || !email) {
+                alert("Please fill out all fields.");
+                return;
+            }
+
+            fetch('/validate_customer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstName, lastName, email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.verified) {
+                    //alert("Thank you for contacting us! We'll get back to you soon.");
+                    document.getElementById('contactModal').style.display = 'none';
+                    showChatbot(data.message);  // Show chatbot with options
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(() => {
+                alert("An error occurred. Please try again.");
+            });
+        });
+
+
+        // Show chatbot with options
+        function showChatbot(message) {
+            const chatbot = document.getElementById('chatbot');
+            const chatbotMessage = document.getElementById('chatbotMessage');
+            const chatbotOptions = document.getElementById('chatbotOptions');
+            const activePortfolioMessage = document.getElementById('activePortfolioMessage');
+            
+            chatbot.style.display = 'block';
+            chatbotMessage.textContent = message;
+
+            // Hide the active portfolio message if Option 4 is selected
+            chatbotOptions.innerHTML = `
+                <button onclick="handleOption(1)">1. General inquiry</button>
+                <button onclick="handleOption(2)">2. Account issue</button>
+                <button onclick="handleOption(3)">3. Issue with recent updates on the dashboard?</button>
+                <button onclick="handleOption(4)">4. Stuck on the DL page. Need further assistance.</button>
+            `;
+        }
+
+        // Show different content based on option selected
+        function handleOption(option) {
+            const chatbotOptions = document.getElementById('chatbotOptions');
+            const additionalInput = document.getElementById('additionalInput');
+            const activePortfolioMessage = document.getElementById('chatbotMessage');
+            const backButton = document.querySelector('.back-btn'); // Get the back button element
+            const confirmationInput = document.getElementById('confirmationInput');
+            const confirmationResult = document.getElementById('confirmationResult');
+        
+            // Hide chatbot options
+            chatbotOptions.style.display = 'none';
+        
+            // Hide confirmation result and input when switching options
+            confirmationResult.innerHTML = '';  // Clear any existing confirmation result
+            confirmationInput.style.display = 'none'; // Hide confirmation input box
+        
+            // Show different content based on option selected
+            if (option === 4) {
+                additionalInput.style.display = 'block';  // Show additional input section
+                activePortfolioMessage.style.display = 'none'; // Hide portfolio message
+                backButton.style.display = 'inline-block'; // Show back button
+                confirmationInput.style.display = 'none'; // Show confirmation input box
+                confirmationResult.style.display = 'none';
+            } 
+            else if (option === 5) {
+                additionalInput.style.display = 'none'; // Hide additional input
+                activePortfolioMessage.style.display = 'none'; // Hide chatbot message
+                backButton.style.display = 'none'; // Hide back button
+                confirmationInput.style.display = 'block'; // Show confirmation input box
+                confirmationResult.style.display = 'block';
+            }
+            else {
+                activePortfolioMessage.style.display = 'block'; // Show message for other options
+                additionalInput.style.display = 'none'; // Hide additional input for other options
+                backButton.style.display = 'none'; // Hide the back button for other options
+                confirmationInput.style.display = 'none'; // Show confirmation input box
+                confirmationResult.style.display = 'none';
+            }
+        }
+        
+        // Consolidated sendConfirmationInput function
+        function sendConfirmationInput() {
+            const confirmationInputText = document.getElementById('confirmationInputText').value.trim().toLowerCase();
+            const resultDiv = document.getElementById('confirmationResult');
+            
+            // Clear any previous messages
+            resultDiv.innerHTML = ''; 
+        
+            // Display the response based on the user's input
+            if (confirmationInputText === 'yes') {
+                resultDiv.textContent = "DL pull is successfully completed.";
+                resultDiv.style.color = "green";
+            } else if (confirmationInputText === 'no') {
+                resultDiv.textContent = "Thanks for contacting us.";
+                resultDiv.style.color = "blue";
+            } else {
+                resultDiv.textContent = "Invalid input. Please enter 'Yes' or 'No'.";
+                resultDiv.style.color = "red";
+            }
+        
+            // Hide the confirmation input box after response is shown
+            document.getElementById('confirmationInputText').value = '';  // Clear the input box
+            document.getElementById('confirmationInput').style.display = 'none';  // Hide the input box
+        
+            // Optionally, show the result for further interaction
+            resultDiv.style.display = 'block';
+        }
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const fileNameElement = document.getElementById('fileName');
+            const sendIcon = document.getElementById('sendIcon');
+            
+            const file = event.target.files[0];
+            if (file) {
+                fileNameElement.textContent = file.name;
+                sendIcon.style.display = 'inline-block';  // Show the send icon
+            } else {
+                fileNameElement.textContent = '';
+                sendIcon.style.display = 'none';  // Hide the send icon
+            }
+        }
+
+        // Handle upload image functionality
+        function uploadImage() {
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert("No file selected.");
+                return;
+            }
+        
+            const formData = new FormData();
+            formData.append('file', file);
+        
+            fetch('/upload_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display response message from server
+                const message = data.message;
+                document.getElementById('confirmationInput').textContent = message;
+                handleOption(5)
+                // Optionally, show additional UI elements based on the message
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+                alert("An error occurred while uploading the image.");
+            });
+        }
+
+        function sendConfirmationInput() {
+            const confirmationInput = document.getElementById('confirmationInputText').value.trim().toLowerCase();
+            const confirmationDiv = document.getElementById('confirmationInput');
+        
+            // Clear any previous messages
+            confirmationDiv.innerHTML = '';
+        
+            // Display the response based on the user's input
+            const resultDiv = document.createElement('div');
+            if (confirmationInput === 'yes') {
+                resultDiv.textContent = "DL pull is successfully completed.";
+                resultDiv.style.color = "green";
+            } else if (confirmationInput === 'no') {
+                resultDiv.textContent = "Thanks for contacting us.";
+                resultDiv.style.color = "blue";
+            } else {
+                resultDiv.textContent = "Invalid input. Please enter 'Yes' or 'No'.";
+                resultDiv.style.color = "red";
+            }
+            
+            // Append the result message
+            confirmationDiv.appendChild(resultDiv);
+        }
+        
+        // Back to options after Option 4
+        function backToOptions() {
+            const activePortfolioMessage = document.getElementById('chatbotMessage');
+            const additionalInput = document.getElementById('additionalInput');
+            const chatbotOptions = document.getElementById('chatbotOptions');
+            const backButton = document.querySelector('.back-btn'); // Get the back button element
+        
+            // Show portfolio message and options again
+            activePortfolioMessage.style.display = 'block';
+            additionalInput.style.display = 'none';
+            chatbotOptions.style.display = 'block'; // Ensure options are shown again
+            
+            // Hide the back button when going back to options
+            backButton.style.display = 'none';
+        }
+
+        function scrollToBottom() {
+            const chatbot = document.getElementById("chatbot");
+            chatbot.scrollTop = chatbot.scrollHeight;
+        }
+        
+
+    </script>
+
+</body>
+</html>
